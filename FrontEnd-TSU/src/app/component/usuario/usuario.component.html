@@ -1,0 +1,37 @@
+<div class="container">
+  <div class="formulario">
+    <h2>{{ usuarioSeleccionado ? 'Editar Usuario' : 'Agregar Usuario' }}</h2>
+    <form (ngSubmit)="guardarUsuario()">
+      <label>Nombre</label>
+      <input type="text" [(ngModel)]="formUsuario.Nombre" name="nombre" required />
+
+      <label>Apellidos</label>
+      <input type="text" [(ngModel)]="formUsuario.Apellidos" name="apellidos" required />
+
+      <label>Teléfono</label>
+      <input type="number" [(ngModel)]="formUsuario.Telefono" name="telefono" required />
+
+      <label>Correo Electrónico</label>
+      <input type="email" [(ngModel)]="formUsuario.Correo" name="email" required />
+
+      <div class="botones-formulario">
+        <button type="submit">{{ usuarioSeleccionado ? 'Actualizar' : 'Agregar' }}</button>
+        <button type="button" (click)="cancelarEdicion()" *ngIf="usuarioSeleccionado">Cancelar</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="lista">
+    <h2>Usuarios</h2>
+    <ul>
+      <li *ngFor="let usuario of usuarios">
+        <div class="info-usuario" (click)="editarUsuario(usuario)">
+          <strong>{{ usuario.Nombre }} {{ usuario.Apellidos }}</strong><br />
+          <small>{{ usuario.Correo }}</small>
+        </div>
+        <button class="eliminar" (click)="eliminarUsuario(usuario.id_Persona)">Borrar</button>
+      </li>
+    </ul>
+  </div>
+  <button class="boton-pdf" (click)="descargarPDF()">Descargar</button>
+</div>

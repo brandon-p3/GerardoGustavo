@@ -46,13 +46,20 @@ class PersonaController {
         return __awaiter(this, void 0, void 0, function* () {
             const { id_Persona } = req.params;
             try {
-                const user = yield (yield database_1.default).query('SELECT Correo FROM persona WHERE Correo = ?', [req.body.Correo]);
-                if (user.length > 0) {
-                    resp.status(400).json({ message: 'Ese correo ya existe' });
-                }
-                else {
+                const userActualizar = yield (yield database_1.default).query('SELECT * FROM persona WHERE id_Persona= ?', [id_Persona]);
+                if (userActualizar[0].Correo == req.body.Correo) {
                     yield (yield database_1.default).query('UPDATE persona SET ? WHERE id_Persona = ?', [req.body, id_Persona]);
                     resp.json({ message: 'Actualizando a la persona ' + req.params.id });
+                }
+                else {
+                    const user = yield (yield database_1.default).query('SELECT Correo FROM persona WHERE Correo = ?', [req.body.Correo]);
+                    if (user.length > 0) {
+                        resp.status(400).json({ message: 'Ese correo ya existe' });
+                    }
+                    else {
+                        yield (yield database_1.default).query('UPDATE persona SET ? WHERE id_Persona = ?', [req.body, id_Persona]);
+                        resp.json({ message: 'Actualizando a la persona ' + req.params.id });
+                    }
                 }
             }
             catch (error) {

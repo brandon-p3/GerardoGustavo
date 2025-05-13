@@ -34,14 +34,21 @@ class PersonaController {
     public async update(req: Request, resp: Response) {
         const { id_Persona } = req.params;
         try {
-            const user: any[] = await (await pool).query('SELECT Correo FROM persona WHERE Correo = ?', [req.body.Correo]);
-            if (user.length > 0) {
-                resp.status(400).json({ message: 'Ese correo ya existe' });
-            } else {
+            const userActualizar: any[] = await (await pool).query('SELECT * FROM persona WHERE id_Persona= ?', [id_Persona]);
+
+            if (userActualizar[0].Correo == req.body.Correo) {
                 await (await pool).query('UPDATE persona SET ? WHERE id_Persona = ?', [req.body, id_Persona]);
                 resp.json({ message: 'Actualizando a la persona ' + req.params.id });
-            }
+            } else {
+                const user: any[] = await (await pool).query('SELECT Correo FROM persona WHERE Correo = ?', [req.body.Correo]);
 
+                if (user.length > 0) {
+                    resp.status(400).json({ message: 'Ese correo ya existe' });
+                } else {
+                    await (await pool).query('UPDATE persona SET ? WHERE id_Persona = ?', [req.body, id_Persona]);
+                    resp.json({ message: 'Actualizando a la persona ' + req.params.id });
+                }
+            }
         } catch (error) {
             console.error(error);
             resp.status(500).json({ message: 'Error updating task' });
