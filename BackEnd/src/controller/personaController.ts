@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import PDFDocument from 'pdfkit';
 import pool from '../database';
 
 class PersonaController {
@@ -74,6 +75,34 @@ class PersonaController {
         }
     }
 
+    public async listPDF(req: Request, res: Response) {
+        try {
+            const personas: any[] = await (await pool).query('SELECT * FROM persona');
+
+            const doc = new PDFDocument();
+
+            res.setHeader('Content-Type', 'application/pdf');
+            res.setHeader('Content-Disposition', 'inline; filename=personas.pdf');
+
+            doc.pipe(res);
+
+            doc.fontSize(18).text('Lista de Personas', { align: 'center' });
+            doc.moveDown();
+
+            personas.forEach((p, index) => {
+                doc
+                    .fontSize(12)
+                    .text(`${index + 1}. Nombre: ${p.Nombre} ${p.Apellidos} | Teléfono: ${p.Telefono} | Correo: ${p.Correo}`);
+                doc.moveDown(0.5);
+            });
+
+            doc.end();
+
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ message: 'Error generando el PDF' });
+        }
+    }
 }
 
 export const personaController = new PersonaController();

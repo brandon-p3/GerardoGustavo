@@ -13,6 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.personaController = void 0;
+const pdfkit_1 = __importDefault(require("pdfkit"));
 const database_1 = __importDefault(require("../database"));
 class PersonaController {
     list(req, resp) {
@@ -88,6 +89,30 @@ class PersonaController {
             catch (error) {
                 console.error(error);
                 resp.status(500).json({ message: 'Error retrieving task' });
+            }
+        });
+    }
+    listPDF(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const personas = yield (yield database_1.default).query('SELECT * FROM persona');
+                const doc = new pdfkit_1.default();
+                res.setHeader('Content-Type', 'application/pdf');
+                res.setHeader('Content-Disposition', 'inline; filename=personas.pdf');
+                doc.pipe(res);
+                doc.fontSize(18).text('Lista de Personas', { align: 'center' });
+                doc.moveDown();
+                personas.forEach((p, index) => {
+                    doc
+                        .fontSize(12)
+                        .text(`${index + 1}. Nombre: ${p.Nombre} ${p.Apellidos} | Teléfono: ${p.Telefono} | Correo: ${p.Correo}`);
+                    doc.moveDown(0.5);
+                });
+                doc.end();
+            }
+            catch (error) {
+                console.error(error);
+                res.status(500).json({ message: 'Error generando el PDF' });
             }
         });
     }

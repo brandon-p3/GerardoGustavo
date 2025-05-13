@@ -13,6 +13,7 @@ class PersonaRoutes {
         this.router.put("/:id_Persona", personaController_1.personaController.update);
         this.router.delete("/:id_Persona", personaController_1.personaController.delete);
         this.router.get("/:id_Persona", personaController_1.personaController.getOne);
+        this.router.get("/descargar/pdf", personaController_1.personaController.listPDF);
     }
 }
 const personaRoutes = new PersonaRoutes();

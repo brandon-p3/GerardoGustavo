@@ -14,7 +14,7 @@ class PersonaRoutes {
         this.router.put("/:id_Persona", personaController.update);
         this.router.delete("/:id_Persona", personaController.delete);
         this.router.get("/:id_Persona", personaController.getOne);
-
+        this.router.get("/descargar/pdf", personaController.listPDF); 
     }
 }
 
